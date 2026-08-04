@@ -4,7 +4,7 @@
       "command": "uvx",
       "args": [
         "--from",
-        "git+https://github.com/colehank/scapegoat",
+        "git+ssh://git@github.com/colehank/scapegoat",
         "scapegoat-mcp"
       ]
     }

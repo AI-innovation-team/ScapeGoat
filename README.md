@@ -19,7 +19,7 @@
 
 装在哪由你决定：`/plugin install` 默认写入 `~/.claude/settings.json`（所有项目可用）；想只在当前项目启用就写进项目的 `.claude/settings.json`。
 
-**唯一前提**：机器上有 `uv`（`curl -LsSf https://astral.sh/uv/install.sh | sh`）。没有也不影响建画像和附身，只是 CLI 相关步骤会跳过并给出提示。
+**前提**：机器上有 `uv`，且能通过 SSH 访问本仓库（`gh auth setup-git` 或配好 SSH key）（`curl -LsSf https://astral.sh/uv/install.sh | sh`）。没有也不影响建画像和附身，只是 CLI 相关步骤会跳过并给出提示。
 
 **日常使用不需要 API key。** 对抗迭代默认由 Claude Code 自己扮演双方角色。只有想脱离会话批量自动跑时才需要 `ANTHROPIC_API_KEY`。
 
@@ -101,7 +101,7 @@ claude --plugin-dir .                  # 以本地目录加载 plugin 调试
 
 ## 命令行（可选）
 
-skill 会自动调用，一般不用手敲。没装包时可用 `uvx --from git+https://github.com/colehank/scapegoat scapegoat ...` 代替 `scapegoat ...`：
+skill 会自动调用，一般不用手敲。没装包时可用 `uvx --from git+ssh://git@github.com/colehank/scapegoat scapegoat ...` 代替 `scapegoat ...`：
 
 ```bash
 scapegoat profile inspect <id>          # 检查画像完整性
