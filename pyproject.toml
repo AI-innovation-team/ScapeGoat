@@ -1,0 +1,117 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "scapegoat"
+version = "0.1.0"
+description = "Python Boilerplate contains all the boilerplate you need to create a Python package."
+readme = "README.md"
+authors = [
+  {name = "Guohao Zhang", email = "guohao2045@gmail.com"}
+]
+maintainers = [
+  {name = "Guohao Zhang", email = "guohao2045@gmail.com"}
+]
+classifiers = [
+    "Typing :: Typed",
+    # TODO: Add additional classifiers as needed
+]
+license = {text = "MIT"}
+dependencies = [
+  "typer",
+  "rich",
+  # mcp 2.0 dropped `mcp.server.fastmcp`, which server.py imports.
+  "mcp>=1.2.0,<2",
+  "pydantic>=2.0",
+]
+requires-python = ">= 3.13"
+
+[project.optional-dependencies]
+# Only the `claude` rollout backend calls the Anthropic API; the default
+# in-session mode has Claude Code play both roles and needs no key.
+claude = ["anthropic"]
+# Speech corpus ingestion (m4a -> transcript). Pulls in PyTorch — several GB —
+# so it stays out of the default install.
+audio = ["funasr>=1.3.1", "torch>=2.12.0", "torchaudio>=2.11.0"]
+
+[dependency-groups]
+dev = [
+    { include-group = "lint" },
+    { include-group = "test" },
+    { include-group = "typecheck" },
+]
+lint = [
+    "ruff",
+]
+test = [
+    "coverage",
+    "pytest",
+]
+typecheck = [
+    "ty",
+]
+docs = [
+    "zensical",
+    "mkdocstrings-python",
+]
+
+[project.urls]
+bugs = "https://github.com/colehank/scapegoat/issues"
+changelog = "https://github.com/colehank/scapegoat/releases"
+documentation = "https://colehank.github.io/scapegoat/"
+homepage = "https://github.com/colehank/scapegoat"
+
+[project.scripts]
+scapegoat = "scapegoat.cli:app"
+scapegoat-mcp = "scapegoat.mcp.server:main"
+
+[tool.ty]
+# All rules are enabled as "error" by default; no need to specify unless overriding.
+# Example override: relax a rule for the entire project (uncomment if needed).
+# rules.TY015 = "warn"  # For invalid-argument-type, warn instead of error.
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+]
+
+[tool.coverage.run]
+branch = true
+parallel = true
+source = ["src/", "tests/"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 50
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING:",
+    "@overload",
+    "@typing.overload",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+    "raise NotImplementedError",
+    "\\.\\.\\.",
+]
+
+[tool.uv]
+package = true
+default-groups = ["dev"]
+
+# `anthropic` and `funasr` are optional extras, so they are absent in a default
+# install (including CI). Both are imported lazily behind a guard at runtime.
+[[tool.ty.overrides]]
+include = ["src/scapegoat/runtime/claude_backend.py", "src/scapegoat/data/audio.py"]
+
+[tool.ty.overrides.rules]
+unresolved-import = "ignore"
