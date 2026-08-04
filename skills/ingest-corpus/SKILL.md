@@ -1,5 +1,5 @@
 ---
-name: scapegoat-ingest-corpus
+name: ingest-corpus
 description: Build or incrementally update a subject profile from corpus material — arbitrary documents or JSON conversations. This is the continuous-learning entry point; each new batch of data merges into the markdown profile under the minimal-bytes contract. Triggers on "ingest corpus", "导入语料", "从文档建画像", "从聊天记录更新画像", "语料训练画像", "继续训练画像".
 ---
 
@@ -9,8 +9,8 @@ description: Build or incrementally update a subject profile from corpus materia
 
 ## Required reading (in order, before anything else)
 
-1. `src/scapegoat/prompts/profile/merge_rules.md` — 写入契约（最小字节原则）。
-2. `src/scapegoat/prompts/profile/ingest.md` — 抽取流程。
+1. `${CLAUDE_PLUGIN_ROOT}/src/scapegoat/prompts/profile/merge_rules.md` — 写入契约（最小字节原则）。
+2. `${CLAUDE_PLUGIN_ROOT}/src/scapegoat/prompts/profile/ingest.md` — 抽取流程。
 3. 若画像已存在：`profiles/<subject_id>/profile.md`（了解现状后再合并）。
 
 ## Procedure
@@ -25,8 +25,8 @@ description: Build or incrementally update a subject profile from corpus materia
 5. **写入**：
    - 新画像 → 按 `init.md` 结构生成 12 个文件（无证据的维度如实标注，不编造）。
    - 已有画像 → 逐维度按 merge_rules 合并：整合改写，**禁止纯追加**。
-6. **校验**：`scapegoat profile budget <subject_id> --base-dir <base_dir> --strict`（或 MCP `profile_budget`）。超预算按契约压缩后重跑，直到通过。
-7. **汇报**：更新了哪些维度的哪些规则、冲突及处理、预算结果；提示"如需用于 rollout/persona，请重新 freeze（scapegoat-freeze-profile）"。
+6. **校验**：`scapegoat profile budget <subject_id> --base-dir <base_dir> --strict`（或 MCP `profile_budget`）。超预算按契约压缩后重跑，直到通过。命令不可用时见 [cli-invocation.md](../cli-invocation.md)。
+7. **汇报**：更新了哪些维度的哪些规则、冲突及处理、预算结果；提示"如需用于 rollout/persona，请重新 freeze（scapegoat:freeze-profile）"。
 
 ## Notes
 

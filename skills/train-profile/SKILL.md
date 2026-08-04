@@ -1,5 +1,5 @@
 ---
-name: scapegoat-train-profile
+name: train-profile
 description: Update frozen scapegoat profiles from an offline training record that compares real vs simulated critic feedback. Use when the user wants to align the discriminator/generator to real feedback. Triggers on "train profile", "训练画像", "对齐反馈", "更新画像".
 ---
 

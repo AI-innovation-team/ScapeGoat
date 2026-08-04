@@ -1,5 +1,5 @@
 ---
-name: scapegoat-run-rollout
+name: run-rollout
 description: Run an adversarial generator/discriminator rollout between two frozen scapegoat profiles. Use when the user wants to iterate a deliverable against a critic until convergence or max steps. Supports an in-session mode where Claude Code itself plays the roles (no API key needed). Triggers on "run rollout", "跑 rollout", "对抗迭代", "生成-判别", "模拟 zzl".
 ---
 
@@ -20,7 +20,7 @@ the user wants Claude Code to "simulate zzl" / "展开一个智能体模拟 zzl"
 there is no Anthropic API key available.
 
 ### Procedure
-1. Ensure both profiles are frozen (use **scapegoat-freeze-profile** if not).
+1. Ensure both profiles are frozen (use **scapegoat:freeze-profile** if not).
    Load them and the TaskSpec. A small driver in Python manages state:
    - `from scapegoat.runtime import in_session`
    - `from scapegoat.runtime.persistence import load_model`
@@ -34,7 +34,7 @@ there is no Anthropic API key available.
       `deliverable = in_session.record_generator_step(state, content)`.
    b. **Render the critic prompt**:
       `prompt = in_session.build_discriminator_prompt(discriminator, state)`.
-   c. **Spawn the discriminator subagent** with the `scapegoat-discriminator`
+   c. **Spawn the discriminator subagent** with the `scapegoat:discriminator`
       agent type, passing `prompt` verbatim as the task. It returns one JSON object.
    d. **Record the critique**: `in_session.record_discriminator_step(state, response)`.
    e. Decide whether to stop early: if the critic's `dissatisfaction_score` is low

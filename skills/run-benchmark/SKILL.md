@@ -1,5 +1,5 @@
 ---
-name: scapegoat-run-benchmark
+name: run-benchmark
 description: Run the behavior-prediction benchmark for a subject profile — answer sourced real-behavior cases under bare/tags/profile conditions, judge with independent subagents, and report per-task scores plus the profile-vs-prior delta. Triggers on "run benchmark", "跑 benchmark", "评测画像", "测画像效果", "benchmark 罗永浩".
 ---
 
@@ -9,7 +9,7 @@ description: Run the behavior-prediction benchmark for a subject profile — ans
 
 ## Inputs
 
-- `cases.json`：`benchmark/<subject_id>/cases.json`（BenchmarkSet schema）。先跑 `scapegoat benchmark validate <file>` 确认合法并看任务构成。
+- `cases.json`：`benchmark/<subject_id>/cases.json`（BenchmarkSet schema）。先跑 `scapegoat benchmark validate <file>` 确认合法并看任务构成（调用方式见 [cli-invocation.md](../cli-invocation.md)）。
 - 画像目录：`profiles/<subject_id>/` 或用户指定。
 - 条件集合：默认三条件 `bare / tags / profile`；用户可指定只跑部分（快速迭代时常只跑 bare+profile）。
 
@@ -19,7 +19,7 @@ description: Run the behavior-prediction benchmark for a subject profile — ans
 
 1. **构造作答 prompt**：用 `scapegoat.benchmark.prompts` 的 `render_condition_context(bench, condition, profile_prompt)` + `render_case_prompt(case)` 拼接。
    - `bare` / `tags` 条件：起一个普通子智能体（Agent tool, general-purpose），prompt = 条件上下文 + 题目。子智能体**只拿到名字/标签**，禁止在 prompt 里夹带任何画像信息。
-   - `profile` 条件：起 `scapegoat-persona` 子智能体，传 `profile_dir` + 题目（这是画像的真实使用方式）。若要做压缩消融，可另跑一轮"嵌入冻结画像渲染文本的普通子智能体"作对照。
+   - `profile` 条件：起 `scapegoat:persona` 子智能体，传 `profile_dir` + 题目（这是画像的真实使用方式）。若要做压缩消融，可另跑一轮"嵌入冻结画像渲染文本的普通子智能体"作对照。
 2. **收集回答**（style 任务收正文，其余收 JSON 字符串）。
 3. **评分**：
    - `choice`：直接 `score_choice(case, response)`，无需 judge。

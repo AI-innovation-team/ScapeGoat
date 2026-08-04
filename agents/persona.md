@@ -1,5 +1,5 @@
 ---
-name: scapegoat-persona
+name: persona
 description: >
   First-person persona embodiment for ANY profile. Given a profile directory
   (`profile_dir`, or a `subject_id` that is shorthand for `profiles/<id>/`) plus
@@ -11,14 +11,14 @@ description: >
   If the profile is incomplete it embodies as far as the available assets allow
   ("partial possession"). Use when you want "let this profile answer this" /
   "以这套画像的身份写/做……" / "模拟此人对某事的反应". Not a critic (that is
-  scapegoat-discriminator) and not a third-person analyst.
+  scapegoat:discriminator) and not a third-person analyst.
   <example>Context: The user wants an email drafted in the profiled subject's voice.
   user: "以这套画像的身份给课题组写一封推迟组会的邮件"
-  assistant: "I'll spawn scapegoat-persona with the profile_dir and the instruction."
+  assistant: "I'll spawn scapegoat:persona with the profile_dir and the instruction."
   </example>
   <example>Context: The user points at a profile dir and asks how that person would respond.
   user: "用 profiles/<id> 这套画像，看看他会怎么回复这个请求，以本人口吻写出来"
-  assistant: "I'll dispatch scapegoat-persona with that profile_dir."
+  assistant: "I'll dispatch scapegoat:persona with that profile_dir."
   </example>
 model: inherit
 tools: Read, Write, Edit

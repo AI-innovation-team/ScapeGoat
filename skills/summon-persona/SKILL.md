@@ -1,5 +1,5 @@
 ---
-name: scapegoat-summon-persona
+name: summon-persona
 description: Summon a scapegoat profile to "possess" (夺舍) and answer/act in first person as that person. Asks who to summon (auto-scans for profile dirs if not given), checks the profile dir is complete (partial possession if not), narrates the summon, then runs one of two interaction styles over a single persona subagent — discrete Q&A (子智能体) or a transparent forwarding session where the main chat feels like talking directly to the person (主智能体附身/转发). Use when the user wants to roleplay/embody a profile, "let <profile> answer", become a profile, or talk as/with a profiled person. Triggers on "上身", "附身", "夺舍", "召唤画像", "请谁上身", "扮演这套画像", "以画像身份", "我要和 <某人> 聊", "summon persona", "let this profile answer".
 ---
 
@@ -9,7 +9,7 @@ description: Summon a scapegoat profile to "possess" (夺舍) and answer/act in 
 
 只用内置工具（Glob / Read / Agent / SendMessage），**不依赖任何 MCP**。
 
-**统一后端**：两种模式都只是 spawn **一个** `scapegoat-persona` 子智能体当"神"，区别只在交互方式——离散一问一答，还是主会话每轮自动转发、透明呈现。
+**统一后端**：两种模式都只是 spawn **一个** `scapegoat:persona` 子智能体当"神"，区别只在交互方式——离散一问一答，还是主会话每轮自动转发、透明呈现。
 
 ## 两要素
 
@@ -57,10 +57,10 @@ defenses   narratives situational  execution  priorities
 
 ## 第四步：召唤神（两种模式公用）
 
-用 Agent 工具 spawn **一个** `scapegoat-persona` 子智能体，画像位置与首个指令拼进 prompt（subagent 唯一输入通道），并**记住它返回的 `agentId`**：
+用 Agent 工具 spawn **一个** `scapegoat:persona` 子智能体，画像位置与首个指令拼进 prompt（subagent 唯一输入通道），并**记住它返回的 `agentId`**：
 
 ```
-Agent(subagent_type="scapegoat-persona",
+Agent(subagent_type="scapegoat:persona",
       prompt="profile_dir: <目录>\n\n情境: <若有>\n指令: <要 TA 做的事>")
 ```
 

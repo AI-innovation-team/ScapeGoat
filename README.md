@@ -8,24 +8,34 @@
 
 ## 安装
 
+在 Claude Code 里两条命令：
+
+```
+/plugin marketplace add colehank/scapegoat
+/plugin install scapegoat@scapegoat
+```
+
+装完即可用，**不需要预先安装 Python 或任何依赖**。建画像、附身、持续学习这些主线功能是纯 markdown，零依赖运行；需要 CLI 的部分（freeze、rollout、benchmark、字节预算校验）由 [uv](https://docs.astral.sh/uv/) 的 `uvx` 按需拉起，首次调用自动建环境，之后走缓存。
+
+装在哪由你决定：`/plugin install` 默认写入 `~/.claude/settings.json`（所有项目可用）；想只在当前项目启用就写进项目的 `.claude/settings.json`。
+
+**唯一前提**：机器上有 `uv`（`curl -LsSf https://astral.sh/uv/install.sh | sh`）。没有也不影响建画像和附身，只是 CLI 相关步骤会跳过并给出提示。
+
+**日常使用不需要 API key。** 对抗迭代默认由 Claude Code 自己扮演双方角色。只有想脱离会话批量自动跑时才需要 `ANTHROPIC_API_KEY`。
+
+<details>
+<summary>本地开发安装</summary>
+
 ```bash
-uv tool install --editable .
+git clone git@github.com:colehank/scapegoat.git && cd scapegoat
+uv tool install --editable .          # 装 CLI 与 MCP server
+uv tool install --editable ".[audio]" # 额外：语音语料转写（会拉 PyTorch，数 GB）
+uv tool install --editable ".[claude]" # 额外：脱离会话的自动化跑批
+
+claude --plugin-dir .                  # 以本地目录加载 plugin 调试
 ```
 
-需要 Python 3.13+。默认安装很轻（约 60MB）。两个可选功能：
-
-```bash
-uv tool install --editable ".[audio]"   # 语音语料转写（会拉 PyTorch，数 GB）
-uv tool install --editable ".[claude]"  # 脱离会话的自动化跑批
-```
-
-**日常使用不需要 API key。** 在 Claude Code 里对话就是全部所需——包括对抗迭代，默认由 Claude Code 自己扮演双方角色。只有想写脚本无人值守批量跑时才需要 `ANTHROPIC_API_KEY`。
-
-注册 MCP server（可选，让 Claude Code 直接调用工具）：
-
-```json
-{"mcpServers": {"scapegoat": {"command": "scapegoat-mcp"}}}
-```
+</details>
 
 ## 怎么用
 
@@ -91,7 +101,7 @@ uv tool install --editable ".[claude]"  # 脱离会话的自动化跑批
 
 ## 命令行（可选）
 
-skill 会自动调用，一般不用手敲：
+skill 会自动调用，一般不用手敲。没装包时可用 `uvx --from git+https://github.com/colehank/scapegoat scapegoat ...` 代替 `scapegoat ...`：
 
 ```bash
 scapegoat profile inspect <id>          # 检查画像完整性

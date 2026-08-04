@@ -1,5 +1,5 @@
 ---
-name: scapegoat-freeze-profile
+name: freeze-profile
 description: Compile a subject's markdown profile assets into a frozen runtime profile. Use when the user wants to check profile completeness or freeze a generator/discriminator profile for scapegoat rollout. Triggers on "freeze profile", "冻结画像", "检查画像", "编译画像".
 ---
 
