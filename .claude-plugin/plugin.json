@@ -15,15 +15,5 @@
     "psychology",
     "behavior-prediction",
     "adversarial"
-  ],
-  "mcpServers": {
-    "scapegoat": {
-      "command": "uvx",
-      "args": [
-        "--from",
-        "git+https://github.com/colehank/scapegoat",
-        "scapegoat-mcp"
-      ]
-    }
-  }
+  ]
 }
