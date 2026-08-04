@@ -107,3 +107,11 @@ exclude_also = [
 [tool.uv]
 package = true
 default-groups = ["dev"]
+
+# `anthropic` and `funasr` are optional extras, so they are absent in a default
+# install (including CI). Both are imported lazily behind a guard at runtime.
+[[tool.ty.overrides]]
+include = ["src/scapegoat/runtime/claude_backend.py", "src/scapegoat/data/audio.py"]
+
+[tool.ty.overrides.rules]
+unresolved-import = "ignore"

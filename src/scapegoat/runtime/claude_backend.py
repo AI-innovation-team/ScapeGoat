@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import os
-from typing import TYPE_CHECKING, Any, Literal, cast
+from typing import TYPE_CHECKING, Any, Literal
 
 if TYPE_CHECKING:
     import anthropic
@@ -183,10 +183,27 @@ class ClaudeRoleBackend:
         )
 
 
+_EFFORT_LEVELS: tuple[Literal["low", "medium", "high", "xhigh", "max"], ...] = (
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max",
+)
+
+
 def _resolve_effort_from_env() -> Literal["low", "medium", "high", "xhigh", "max"]:
+    """Read the effort level from the environment, falling back to `high`.
+
+    Returning the matched tuple element (rather than the environment string)
+    keeps the literal type without a cast, which type checkers narrow
+    inconsistently across versions.
+    """
+
     value = os.environ.get("SCAPEGOAT_CLAUDE_EFFORT", "high")
-    if value in {"low", "medium", "high", "xhigh", "max"}:
-        return cast(Literal["low", "medium", "high", "xhigh", "max"], value)
+    for level in _EFFORT_LEVELS:
+        if value == level:
+            return level
     return "high"
 
 
