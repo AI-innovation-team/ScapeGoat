@@ -1,0 +1,19 @@
+{
+  "name": "scapegoat",
+  "displayName": "Scapegoat",
+  "version": "0.1.0",
+  "description": "Build a behavior-predictive psychological profile of a person from corpus or interactive Q&A, then have Claude act as that profile.",
+  "author": {
+    "name": "Guohao Zhang",
+    "email": "guohao2045@gmail.com"
+  },
+  "repository": "https://github.com/AI-innovation-team/scapegoat",
+  "license": "MIT",
+  "keywords": [
+    "profile",
+    "persona",
+    "psychology",
+    "behavior-prediction",
+    "adversarial"
+  ]
+}

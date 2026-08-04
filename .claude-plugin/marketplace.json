@@ -1,0 +1,16 @@
+{
+  "name": "scapegoat",
+  "owner": {
+    "name": "Guohao Zhang",
+    "email": "guohao2045@gmail.com"
+  },
+  "description": "Psychodynamic profile toolkit for Claude Code.",
+  "version": "1",
+  "plugins": [
+    {
+      "name": "scapegoat",
+      "description": "Build a behavior-predictive psychological profile of a person from corpus or interactive Q&A, then have Claude act as that profile.",
+      "source": "."
+    }
+  ]
+}
