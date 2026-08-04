@@ -84,9 +84,16 @@ _REFERENCE = re.compile(
 )
 
 
-def _rewrite_reference(match: re.Match[str], repo: str, visibility: str) -> str:
-    """Map one matched reference onto its current form."""
+def _rewrite_reference(match: re.Match[str], repo: str, visibility: str, known: set[str]) -> str:
+    """Map one matched reference onto its current form.
 
+    References to other repositories are left alone: the owner/repo pattern
+    matches any of them, so without this guard a link to an unrelated project
+    would be rewritten to point here.
+    """
+
+    if match.group(match.lastindex or 0) not in known:
+        return match.group(0)
     public = visibility == "public"
     if match.lastgroup in ("uv_ssh", "uv_https"):
         return f"git+https://github.com/{repo}" if public else f"git+ssh://git@github.com/{repo}"
@@ -95,7 +102,7 @@ def _rewrite_reference(match: re.Match[str], repo: str, visibility: str) -> str:
     return f"https://github.com/{repo}"  # plain web URL: always HTTPS
 
 
-def _literal_rules(repo: str, visibility: str) -> list[tuple[str, str]]:
+def _literal_rules(repo: str, visibility: str, known: set[str]) -> list[tuple[str, str]]:
     """Replacements outside URLs: install ids, the `cd` target, one sentence."""
 
     name = repo.split("/", 1)[1]
@@ -105,30 +112,49 @@ def _literal_rules(repo: str, visibility: str) -> list[tuple[str, str]]:
         else "仓库是私有的，所以用 SSH 形式——HTTPS 在没有凭证时会失败。"
     )
     return [
-        (rf"(?<=/plugin marketplace add ){_OWNER_REPO}", repo),
+        (rf"(?<=/plugin marketplace add )(?:{'|'.join(re.escape(k) for k in sorted(known))})", repo),
         (r"(?<=/plugin install )[A-Za-z0-9._-]+@[A-Za-z0-9._-]+", f"{name}@{name}"),
         (r"(?<=&& cd )[A-Za-z0-9._-]+", name),
         (r"仓库是(?:私有|公开)的，所以用 (?:SSH|HTTPS) 形式[^\n]*。", transport),
     ]
 
 
-def apply_rules(text: str, repo: str, visibility: str) -> str:
-    """Bring every repository reference in one file up to date."""
+def apply_rules(text: str, repo: str, visibility: str, previous: str | None = None) -> str:
+    """Bring this repository's references in one file up to date.
 
-    text = _REFERENCE.sub(lambda m: _rewrite_reference(m, repo, visibility), text)
-    for pattern, target in _literal_rules(repo, visibility):
+    `previous` names the owner/repo the tree currently claims, so a transfer or
+    rename is still recognised. It defaults to whatever `.claude-plugin/
+    plugin.json` recorded, which the sync itself keeps current.
+    """
+
+    known = {repo}
+    if previous:
+        known.add(previous)
+    text = _REFERENCE.sub(lambda m: _rewrite_reference(m, repo, visibility, known), text)
+    for pattern, target in _literal_rules(repo, visibility, known):
         text = re.sub(pattern, target, text)
     return text
 
 
-def sync(repo: str, visibility: str, check: bool) -> int:
+def recorded_repo() -> str | None:
+    """The owner/repo the committed manifest claims, if it is readable."""
+
+    manifest = ROOT / ".claude-plugin" / "plugin.json"
+    if not manifest.exists():
+        return None
+    match = re.search(rf"github\.com/({_OWNER_REPO})", manifest.read_text(encoding="utf-8"))
+    return match.group(1) if match else None
+
+
+def sync(repo: str, visibility: str, check: bool, previous: str | None = None) -> int:
+    previous = previous or recorded_repo()
     stale: list[str] = []
     for rel in (*TARGETS, *DOC_TARGETS):
         path = ROOT / rel
         if not path.exists():
             continue
         original = path.read_text(encoding="utf-8")
-        updated = apply_rules(original, repo, visibility)
+        updated = apply_rules(original, repo, visibility, previous)
         if updated != original:
             stale.append(rel)
             if not check:
@@ -151,10 +177,14 @@ def main() -> int:
     parser.add_argument("--repo", help="owner/name (default: GITHUB_REPOSITORY or origin remote)")
     parser.add_argument("--visibility", choices=("public", "private"), help="default: detected")
     parser.add_argument("--check", action="store_true", help="report drift without writing")
+    parser.add_argument(
+        "--previous",
+        help="owner/name the tree currently claims (default: read from plugin.json)",
+    )
     args = parser.parse_args()
     repo = args.repo or detect_repo()
     visibility = args.visibility or detect_visibility(repo)
-    return sync(repo, visibility, args.check)
+    return sync(repo, visibility, args.check, args.previous)
 
 
 if __name__ == "__main__":

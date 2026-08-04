@@ -24,14 +24,14 @@ git clone git@github.com:old/name.git && cd name
 
 
 def test_public_switches_transport_to_https():
-    out = apply_rules(SAMPLE, "old/name", "public")
+    out = apply_rules(SAMPLE, "old/name", "public", previous="old/name")
     assert "git+https://github.com/old/name" in out
     assert "git+ssh://" not in out
     assert "仓库是公开的" in out
 
 
 def test_private_keeps_ssh():
-    out = apply_rules(SAMPLE, "old/name", "private")
+    out = apply_rules(SAMPLE, "old/name", "private", previous="old/name")
     assert "git+ssh://git@github.com/old/name" in out
     assert "git clone git@github.com:old/name.git" in out
 
@@ -39,17 +39,17 @@ def test_private_keeps_ssh():
 def test_clone_url_keeps_the_git_suffix():
     """The owner/repo class contains dots, so `.git` is easy to swallow."""
 
-    out = apply_rules(SAMPLE, "old/name", "public")
+    out = apply_rules(SAMPLE, "old/name", "public", previous="old/name")
     assert "git clone https://github.com/old/name.git" in out
 
 
 def test_web_urls_keep_their_path():
-    out = apply_rules(SAMPLE, "old/name", "public")
+    out = apply_rules(SAMPLE, "old/name", "public", previous="old/name")
     assert "https://github.com/old/name/tarball/main" in out
 
 
 def test_rename_updates_every_shape():
-    out = apply_rules(SAMPLE, "newowner/newrepo", "public")
+    out = apply_rules(SAMPLE, "newowner/newrepo", "public", previous="old/name")
     assert "old/name" not in out
     assert "/plugin marketplace add newowner/newrepo" in out
     assert "/plugin install newrepo@newrepo" in out
@@ -58,17 +58,46 @@ def test_rename_updates_every_shape():
 
 
 def test_round_trip_is_reversible():
-    once = apply_rules(SAMPLE, "old/name", "public")
-    back = apply_rules(once, "old/name", "private")
+    once = apply_rules(SAMPLE, "old/name", "public", previous="old/name")
+    back = apply_rules(once, "old/name", "private", previous="old/name")
     assert back == SAMPLE
 
 
 def test_applying_twice_changes_nothing():
-    once = apply_rules(SAMPLE, "new/repo", "public")
-    assert apply_rules(once, "new/repo", "public") == once
+    once = apply_rules(SAMPLE, "new/repo", "public", previous="old/name")
+    assert apply_rules(once, "new/repo", "public", previous="new/repo") == once
 
 
 def test_repo_tree_is_in_sync():
     """The committed tree must already match its own remote."""
 
     assert sync_repo_urls.sync("colehank/scapegoat", "private", check=True) == 0
+
+
+FOREIGN = """\
+装 uv: https://github.com/astral-sh/uv
+本仓库: https://github.com/old/name
+克隆别人的: git clone git@github.com:someone/other.git
+/plugin marketplace add old/name
+"""
+
+
+def test_other_repositories_are_left_alone():
+    """The owner/repo pattern matches anything, so this needs an explicit guard."""
+
+    out = apply_rules(FOREIGN, "new/repo", "public", previous="old/name")
+    assert "https://github.com/astral-sh/uv" in out
+    assert "git@github.com:someone/other.git" in out
+    assert "https://github.com/new/repo" in out
+    assert "/plugin marketplace add new/repo" in out
+
+
+def test_transfer_and_rename_together():
+    out = apply_rules(SAMPLE, "neworg/newname", "public", previous="old/name")
+    assert "old/name" not in out
+    assert "git+https://github.com/neworg/newname" in out
+    assert "git clone https://github.com/neworg/newname.git && cd newname" in out
+
+
+def test_previous_defaults_to_the_recorded_manifest():
+    assert sync_repo_urls.recorded_repo() == "colehank/scapegoat"
