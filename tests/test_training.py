@@ -1,6 +1,7 @@
 """Tests for offline training updates."""
 
 import json
+from typing import Literal
 
 import pytest
 
@@ -17,7 +18,7 @@ from scapegoat.training.schema import (
 from scapegoat.training.update import MAX_BEHAVIOR_RULES, apply_patch, build_patches, train_profiles
 
 
-def make_profile(subject_id: str, role: str) -> FrozenProfile:
+def make_profile(subject_id: str, role: Literal["generator", "discriminator"]) -> FrozenProfile:
     return FrozenProfile(
         subject_id=subject_id,
         role=role,

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Literal
 
 from scapegoat.mcp.server import create_training_record, render_training_loss_prompt, train_profiles
 from scapegoat.profile.schema import FrozenProfile
@@ -22,7 +23,7 @@ def _write_inputs(tmp_path: Path) -> tuple[str, str, str, str]:
     return str(task_file), str(deliverable), str(real_feedback), str(simulated_feedback)
 
 
-def _write_profile(path: Path, subject_id: str, role: str) -> str:
+def _write_profile(path: Path, subject_id: str, role: Literal["generator", "discriminator"]) -> str:
     save_model(
         FrozenProfile(
             subject_id=subject_id,

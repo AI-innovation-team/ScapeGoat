@@ -1,6 +1,7 @@
 """Tests for rollout markdown export."""
 
 from pathlib import Path
+from typing import Literal
 
 from scapegoat.profile.schema import FrozenProfile
 from scapegoat.runtime.doc_export import export_session_markdown
@@ -9,7 +10,7 @@ from scapegoat.runtime.rollout import build_session
 from scapegoat.runtime.schema import CritiqueStep, DeliverableStep, RolloutTurn, RuntimeState, TaskSpec
 
 
-def _profile(subject_id: str, role: str) -> FrozenProfile:
+def _profile(subject_id: str, role: Literal["generator", "discriminator"]) -> FrozenProfile:
     return FrozenProfile(
         subject_id=subject_id,
         role=role,

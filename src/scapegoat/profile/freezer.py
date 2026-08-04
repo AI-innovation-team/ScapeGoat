@@ -124,13 +124,9 @@ def freeze_profile(
     profile_lines = _take_sentences(bundle.profile_markdown, limit=10)
     summary = profile_lines[0] if profile_lines else bundle.subject_id
     core_rules = (
-        profile_lines[:2]
-        + dimension_rules.get("worldview", [])[:1]
-        + dimension_rules.get("personality", [])[:1]
+        profile_lines[:2] + dimension_rules.get("worldview", [])[:1] + dimension_rules.get("personality", [])[:1]
     ) or [summary]
-    style_rules = (
-        dimension_rules.get("narratives", [])[:2] + dimension_rules.get("affect", [])[:2]
-    ) or [summary]
+    style_rules = (dimension_rules.get("narratives", [])[:2] + dimension_rules.get("affect", [])[:2]) or [summary]
     behavior_rules = (
         dimension_rules.get("execution", [])[:3]
         + dimension_rules.get("situational", [])[:2]
@@ -143,14 +139,8 @@ def freeze_profile(
     else:
         convergence_rules.append("当交付物覆盖任务成功标准且没有新的核心批评点时给出 converged=true。")
 
-    evidence_refs = {
-        name: text.splitlines()[0] if text.splitlines() else name
-        for name, text in bundle.analyse.items()
-    }
-    source_analyse_paths = {
-        name[:-3]: str(Path(bundle.source_dir) / "analyse" / name)
-        for name in ANALYSE_FILENAMES
-    }
+    evidence_refs = {name: text.splitlines()[0] if text.splitlines() else name for name, text in bundle.analyse.items()}
+    source_analyse_paths = {name[:-3]: str(Path(bundle.source_dir) / "analyse" / name) for name in ANALYSE_FILENAMES}
 
     return FrozenProfile(
         subject_id=bundle.subject_id,

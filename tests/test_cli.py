@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+from typing import Literal
 
 from typer.testing import CliRunner
 
@@ -10,7 +11,7 @@ from scapegoat.profile.schema import FrozenProfile
 from scapegoat.runtime.persistence import save_model
 
 
-def make_profile(path: Path, subject_id: str, role: str) -> None:
+def make_profile(path: Path, subject_id: str, role: Literal["generator", "discriminator"]) -> None:
     save_model(
         FrozenProfile(
             subject_id=subject_id,
@@ -32,9 +33,9 @@ def make_profile(path: Path, subject_id: str, role: str) -> None:
     )
 
 
-def test_profile_inspect_command():
+def test_profile_inspect_command(profiles_dir: Path):
     runner = CliRunner()
-    result = runner.invoke(app, ["profile", "inspect", "zgh", "--base-dir", "profiles"])
+    result = runner.invoke(app, ["profile", "inspect", "gen_subject", "--base-dir", str(profiles_dir)])
     assert result.exit_code == 0
     assert "status=complete" in result.stdout
 
@@ -90,9 +91,9 @@ def test_profile_corpus_command(tmp_path: Path):
     assert "t: 第一句" in out.read_text(encoding="utf-8")
 
 
-def test_profile_budget_command():
+def test_profile_budget_command(profiles_dir: Path):
     runner = CliRunner()
-    result = runner.invoke(app, ["profile", "budget", "zgh", "--base-dir", "profiles"])
+    result = runner.invoke(app, ["profile", "budget", "gen_subject", "--base-dir", str(profiles_dir)])
     assert result.exit_code == 0
     assert "verdict=" in result.stdout
 

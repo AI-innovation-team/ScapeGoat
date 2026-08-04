@@ -2,20 +2,24 @@
 
 from pathlib import Path
 
+import pytest
+
 from scapegoat.runtime.config import load_backend_config
 from scapegoat.runtime.schema import TaskSpec
 from scapegoat.training.schema import TrainingRecord
 
 EXAMPLE_DIR = Path("examples/book_writing_ai_cognitive_neuroscience")
 
+# The example carries a real person's feedback, so it is kept out of version
+# control; skip rather than fail wherever it has not been provided.
+pytestmark = pytest.mark.skipif(not EXAMPLE_DIR.exists(), reason="example assets are not distributed with the repo")
+
 
 def test_book_writing_example_assets_parse():
     task = TaskSpec.model_validate_json((EXAMPLE_DIR / "task.json").read_text(encoding="utf-8"))
     local_backend = load_backend_config(EXAMPLE_DIR / "backend_config.local.json")
     claude_backend = load_backend_config(EXAMPLE_DIR / "backend_config.claude.json")
-    record = TrainingRecord.model_validate_json(
-        (EXAMPLE_DIR / "training_record_v1.json").read_text(encoding="utf-8")
-    )
+    record = TrainingRecord.model_validate_json((EXAMPLE_DIR / "training_record_v1.json").read_text(encoding="utf-8"))
 
     assert task.deliverable_type == "chapter_draft"
     assert task.constraints

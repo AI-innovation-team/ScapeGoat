@@ -1,6 +1,7 @@
 """Tests for Claude backend prompt assembly and parsing."""
 
 from types import SimpleNamespace
+from typing import Any, Literal
 
 from scapegoat.profile.schema import FrozenProfile
 from scapegoat.runtime.claude_backend import ClaudeRoleBackend
@@ -17,7 +18,13 @@ class FakeClient:
         return SimpleNamespace(content=[SimpleNamespace(type="text", text=self.text)])
 
 
-def make_profile(subject_id: str, role: str) -> FrozenProfile:
+def fake_client(payload: str) -> Any:
+    """FakeClient stands in for anthropic.Anthropic, which is an optional dep."""
+
+    return FakeClient(payload)
+
+
+def make_profile(subject_id: str, role: Literal["generator", "discriminator"]) -> FrozenProfile:
     return FrozenProfile(
         subject_id=subject_id,
         role=role,
@@ -45,13 +52,13 @@ def test_claude_backend_generate_and_critique_parse():
         success_criteria=["criterion"],
     )
     state = RuntimeState(task=task, generator_profile_version=1, discriminator_profile_version=1)
-    generator_backend = ClaudeRoleBackend(BackendConfig(backend="claude"), client=FakeClient("draft text"))
+    generator_backend = ClaudeRoleBackend(BackendConfig(backend="claude"), client=fake_client("draft text"))
     deliverable = generator_backend.generate(make_profile("zgh", "generator"), task, state, None)
     assert deliverable.content == "draft text"
 
     discriminator_backend = ClaudeRoleBackend(
         BackendConfig(backend="claude"),
-        client=FakeClient('{"feedback": "ok", "dissatisfaction_score": 4, "reasons": ["done"]}'),
+        client=fake_client('{"feedback": "ok", "dissatisfaction_score": 4, "reasons": ["done"]}'),
     )
     critique = discriminator_backend.critique(make_profile("zzl", "discriminator"), task, state, deliverable)
     assert critique.dissatisfaction_score == 4
@@ -65,9 +72,9 @@ def test_claude_backend_critique_reads_converged_flag():
     state = RuntimeState(task=task, generator_profile_version=1, discriminator_profile_version=1)
     backend = ClaudeRoleBackend(
         BackendConfig(backend="claude"),
-        client=FakeClient('{"feedback": "ok", "dissatisfaction_score": 2, "reasons": [], "converged": true}'),
+        client=fake_client('{"feedback": "ok", "dissatisfaction_score": 2, "reasons": [], "converged": true}'),
     )
-    deliverable = ClaudeRoleBackend(BackendConfig(backend="claude"), client=FakeClient("draft text")).generate(
+    deliverable = ClaudeRoleBackend(BackendConfig(backend="claude"), client=fake_client("draft text")).generate(
         make_profile("zgh", "generator"), task, state, None
     )
     critique = backend.critique(make_profile("zzl", "discriminator"), task, state, deliverable)

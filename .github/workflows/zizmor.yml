@@ -1,19 +1,9 @@
 name: Workflow security analysis
 
+# Uploads SARIF to code scanning, which needs GitHub Advanced Security on
+# private repositories. Manual trigger only until then.
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/**"
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - ready_for_review
-    paths:
-      - ".github/workflows/**"
+  workflow_dispatch:
 
 permissions: {}
 

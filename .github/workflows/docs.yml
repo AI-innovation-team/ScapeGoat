@@ -1,10 +1,9 @@
 name: Documentation
 
+# Publishing Pages from a private repository needs GitHub Pro or above.
+# Manual trigger only; restore the push trigger once Pages is available.
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 permissions: {}
 

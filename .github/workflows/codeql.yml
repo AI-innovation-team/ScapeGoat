@@ -1,12 +1,10 @@
 name: CodeQL
 
+# Code scanning needs GitHub Advanced Security on private repositories, so the
+# automatic triggers are off. Re-enable push/pull_request/schedule if this repo
+# becomes public or gains GHAS.
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  schedule:
-    - cron: '0 6 * * 1'
+  workflow_dispatch:
 
 permissions: {}
 

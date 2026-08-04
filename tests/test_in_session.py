@@ -22,14 +22,14 @@ def _task() -> TaskSpec:
     )
 
 
-def _profiles():
-    generator = freeze_profile(load_profile_bundle("zgh", Path("profiles")), role="generator")
-    discriminator = freeze_profile(load_profile_bundle("zzl", Path("profiles")), role="discriminator")
+def _profiles(profiles_dir: Path):
+    generator = freeze_profile(load_profile_bundle("gen_subject", profiles_dir), role="generator")
+    discriminator = freeze_profile(load_profile_bundle("disc_subject", profiles_dir), role="discriminator")
     return generator, discriminator
 
 
-def test_discriminator_prompt_includes_persona_and_deliverable():
-    generator, discriminator = _profiles()
+def test_discriminator_prompt_includes_persona_and_deliverable(profiles_dir: Path):
+    generator, discriminator = _profiles(profiles_dir)
     task = _task()
     state = in_session.start_state(generator, discriminator, task)
     in_session.record_generator_step(state, "第一版草稿正文")
@@ -62,8 +62,8 @@ def test_parse_critique_reads_converged_flag_and_defaults_false():
     assert missing.converged is False
 
 
-def test_discriminator_prompt_documents_converged_field():
-    generator, discriminator = _profiles()
+def test_discriminator_prompt_documents_converged_field(profiles_dir: Path):
+    generator, discriminator = _profiles(profiles_dir)
     state = in_session.start_state(generator, discriminator, _task())
     in_session.record_generator_step(state, "第一版草稿正文")
     prompt = in_session.build_discriminator_prompt(discriminator, state)
@@ -71,8 +71,8 @@ def test_discriminator_prompt_documents_converged_field():
     assert "你永远不会主动宣布完成或收敛" not in prompt
 
 
-def test_in_session_converged_critique_ends_session_early():
-    generator, discriminator = _profiles()
+def test_in_session_converged_critique_ends_session_early(profiles_dir: Path):
+    generator, discriminator = _profiles(profiles_dir)
     state = in_session.start_state(generator, discriminator, _task())
     in_session.record_generator_step(state, "第 1 版草稿")
     in_session.record_discriminator_step(
@@ -84,8 +84,8 @@ def test_in_session_converged_critique_ends_session_early():
     assert len(state.turns) == 1
 
 
-def test_full_in_session_cycle_and_persistence(tmp_path):
-    generator, discriminator = _profiles()
+def test_full_in_session_cycle_and_persistence(profiles_dir: Path, tmp_path):
+    generator, discriminator = _profiles(profiles_dir)
     task = _task()
     gen_path = tmp_path / "zgh.json"
     disc_path = tmp_path / "zzl.json"

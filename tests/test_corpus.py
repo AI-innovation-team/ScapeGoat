@@ -66,9 +66,13 @@ def test_render_corpus_markdown_headers(tmp_path: Path):
     assert "\n\n---\n\n" in rendered
 
 
-def test_real_database_conversation_parses():
-    path = Path("database/20240913_messages.json")
+def test_long_conversation_export_parses(tmp_path: Path):
+    """A realistic export: many turns, role/content keys, mixed speakers."""
+
+    turns = [{"role": "teacher" if i % 2 == 0 else "student", "content": f"第{i}句发言内容"} for i in range(120)]
+    path = tmp_path / "messages.json"
+    path.write_text(json.dumps(turns, ensure_ascii=False), encoding="utf-8")
     source = normalize_source(path)
     assert source.kind == "conversation"
-    assert source.turns > 100
-    assert source.text.splitlines()[0].startswith(("teacher:", "student:"))
+    assert source.turns == 120
+    assert source.text.splitlines()[0].startswith("teacher:")

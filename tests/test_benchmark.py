@@ -117,8 +117,10 @@ def test_aggregate_profile_delta():
         CaseRun(case_id="3", task="critique", condition="profile", response="", score=0.6),
     ]
     report = aggregate(BenchmarkRun(subject_id="s", runs=runs))
-    assert report.cell("choice", "bare").mean_score == 0.25
-    assert report.cell("choice", "profile").mean_score == 0.875
+    bare_cell = report.cell("choice", "bare")
+    profile_cell = report.cell("choice", "profile")
+    assert bare_cell is not None and bare_cell.mean_score == 0.25
+    assert profile_cell is not None and profile_cell.mean_score == 0.875
     assert report.profile_delta == {"choice": 0.625}
     text = render_report(report)
     assert "profile_delta" in text

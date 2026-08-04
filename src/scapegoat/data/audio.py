@@ -57,8 +57,8 @@ def _get_model() -> FunASRModel:
 # second (likely silence, noise, or hallucination) get penalised.
 # ---------------------------------------------------------------------------
 
-_NORMAL_TOKENS_PER_SEC = 5.0   # typical Mandarin speech rate
-_DENSITY_PENALTY_FLOOR = 0.4   # minimum score from density alone
+_NORMAL_TOKENS_PER_SEC = 5.0  # typical Mandarin speech rate
+_DENSITY_PENALTY_FLOOR = 0.4  # minimum score from density alone
 
 
 def _estimate_confidence(sentence: str, start_ms: int, end_ms: int) -> float:
@@ -74,6 +74,7 @@ def _estimate_confidence(sentence: str, start_ms: int, end_ms: int) -> float:
         return _DENSITY_PENALTY_FLOOR
     # log-normal shaped: score = exp(-0.5 * (ln ratio)^2)
     import math
+
     score = math.exp(-0.5 * math.log(max(ratio, 1e-9)) ** 2)
     return max(_DENSITY_PENALTY_FLOOR, min(1.0, score))
 

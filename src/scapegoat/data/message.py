@@ -71,9 +71,7 @@ class TranscriptionSegment(BaseModel):
     @model_validator(mode="after")
     def end_after_start(self) -> TranscriptionSegment:
         if self.end_ms <= self.start_ms:
-            raise ValueError(
-                f"end_ms ({self.end_ms}) must be greater than start_ms ({self.start_ms})"
-            )
+            raise ValueError(f"end_ms ({self.end_ms}) must be greater than start_ms ({self.start_ms})")
         return self
 
     @property
@@ -167,10 +165,7 @@ class Message(BaseModel):
         """
         low_quality = [s for s in segments if s.confidence < min_confidence]
         if low_quality:
-            details = ", ".join(
-                f"[{s.start_ms}ms–{s.end_ms}ms conf={s.confidence:.2f}]"
-                for s in low_quality
-            )
+            details = ", ".join(f"[{s.start_ms}ms–{s.end_ms}ms conf={s.confidence:.2f}]" for s in low_quality)
             raise ValueError(
                 f"Transcription quality below threshold ({min_confidence}): {details}. "
                 "Manual review required before message can be created."
@@ -220,8 +215,7 @@ class Session(BaseModel):
         for i in range(1, len(rounds)):
             if rounds[i] < rounds[i - 1]:
                 raise ValueError(
-                    f"Message rounds must be non-decreasing, "
-                    f"but found round {rounds[i]} after round {rounds[i - 1]}"
+                    f"Message rounds must be non-decreasing, but found round {rounds[i]} after round {rounds[i - 1]}"
                 )
         return self
 
@@ -233,10 +227,7 @@ class Session(BaseModel):
                 None,
             )
             if last_round is not None and message.round < last_round:
-                raise ValueError(
-                    f"Cannot append message with round {message.round} "
-                    f"after existing round {last_round}"
-                )
+                raise ValueError(f"Cannot append message with round {message.round} after existing round {last_round}")
         self.messages.append(message)
 
     def by_role(self, role: Role) -> list[Message]:

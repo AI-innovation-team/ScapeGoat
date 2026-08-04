@@ -1,11 +1,13 @@
 """Tests for rollout state machine."""
 
+from typing import Literal
+
 from scapegoat.profile.schema import FrozenProfile
 from scapegoat.runtime.rollout import build_result, run_rollout
 from scapegoat.runtime.schema import CritiqueStep, DeliverableStep, TaskSpec
 
 
-def make_profile(subject_id: str, role: str) -> FrozenProfile:
+def make_profile(subject_id: str, role: Literal["generator", "discriminator"]) -> FrozenProfile:
     return FrozenProfile(
         subject_id=subject_id,
         role=role,

@@ -1,5 +1,7 @@
 """Tests for message data models — quality gate validation."""
 
+from typing import Any
+
 import pytest
 from pydantic import ValidationError
 
@@ -11,7 +13,7 @@ from scapegoat.data.message import Message, Role, Session, Source, Transcription
 
 
 def make_segment(**overrides) -> TranscriptionSegment:
-    defaults = dict(
+    defaults: dict[str, Any] = dict(
         speaker_label="spk1",
         text="你这里逻辑有问题",
         start_ms=0,
@@ -54,12 +56,12 @@ def test_segment_confidence_out_of_range():
 
 
 def make_teacher_msg(**overrides) -> Message:
-    defaults = dict(role=Role.TEACHER, content="你这里理论理解太浅", source=Source.REAL, round=1)
+    defaults: dict[str, Any] = dict(role=Role.TEACHER, content="你这里理论理解太浅", source=Source.REAL, round=1)
     return Message(**(defaults | overrides))
 
 
 def make_student_msg(**overrides) -> Message:
-    defaults = dict(role=Role.STUDENT, content="第一章草稿...", source=Source.REAL, round=1)
+    defaults: dict[str, Any] = dict(role=Role.STUDENT, content="第一章草稿...", source=Source.REAL, round=1)
     return Message(**(defaults | overrides))
 
 
@@ -110,6 +112,7 @@ def test_from_segments_high_confidence():
     m = Message.from_segments(segs, role=Role.TEACHER, round=1)
     assert m.source == Source.REAL
     assert "你这里逻辑有问题" in m.content
+    assert m.transcription_segments is not None
     assert len(m.transcription_segments) == 1
 
 
