@@ -52,6 +52,12 @@ jobs:
       - name: Type check with ty
         run: uv run ty check .
 
+      - name: Repository URLs are current
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          REPO_VISIBILITY: ${{ github.event.repository.visibility }}
+        run: uv run --no-project python scripts/sync_repo_urls.py --check
+
   test:
     name: Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest

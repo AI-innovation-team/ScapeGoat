@@ -1,0 +1,53 @@
+name: Sync repository URLs
+
+# Keeps the repository references in the README, the plugin manifests, and the
+# skill docs matching reality. Renaming the repo, transferring it, or flipping
+# it public changes which git transport users need — a private repo has to be
+# fetched over SSH, a public one over HTTPS so no SSH key is required.
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  # Visibility changes do not touch the tree, so a push will not catch them.
+  schedule:
+    - cron: "17 4 * * 1"
+
+permissions: {}
+
+concurrency:
+  group: sync-repo-urls
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync
+    runs-on: ubuntu-latest
+    # The job pushes a commit; skip its own commits so it cannot loop.
+    if: github.actor != 'github-actions[bot]'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
+
+      - name: Rewrite repository URLs
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          REPO_VISIBILITY: ${{ github.event.repository.visibility }}
+        run: uv run --no-project python scripts/sync_repo_urls.py
+
+      - name: Commit if anything changed
+        run: |
+          if git diff --quiet; then
+            echo "Repository URLs already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Sync repository URLs to ${GITHUB_REPOSITORY}"
+          git push
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
