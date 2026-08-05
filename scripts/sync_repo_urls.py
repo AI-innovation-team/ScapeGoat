@@ -31,7 +31,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # component is picked up regardless of which form the file happens to use.
 _OWNER_REPO = r"[A-Za-z0-9._-]+/[A-Za-z0-9._-]+"
 
-TARGETS = ("README.md", ".mcp.json", "skills/cli-invocation.md", ".claude-plugin/plugin.json")
+TARGETS = ("README.md", "README.en.md", ".mcp.json", "skills/cli-invocation.md", ".claude-plugin/plugin.json")
 DOC_TARGETS = ("docs/installation.md",)
 
 
