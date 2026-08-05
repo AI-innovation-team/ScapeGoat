@@ -32,8 +32,8 @@ def _profile(subject_id: str, role: Literal["generator", "discriminator"]) -> Fr
 def test_export_session_markdown(tmp_path: Path):
     generator_path = tmp_path / "generator.json"
     discriminator_path = tmp_path / "discriminator.json"
-    save_model(_profile("zgh", "generator"), generator_path)
-    save_model(_profile("zzl", "discriminator"), discriminator_path)
+    save_model(_profile("author", "generator"), generator_path)
+    save_model(_profile("mentor", "discriminator"), discriminator_path)
     task = TaskSpec(
         task_id="task1",
         goal="book chapter",

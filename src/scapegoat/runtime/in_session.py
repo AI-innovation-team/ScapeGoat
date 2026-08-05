@@ -3,8 +3,8 @@
 This module is the bridge for running a rollout *inside* a Claude Code session
 instead of through the Anthropic SDK. The orchestration model is:
 
-* the generator (e.g. zgh) is played by the main conversation;
-* the discriminator (e.g. zzl) is played by a spawned Claude Code subagent;
+* the generator (e.g. author) is played by the main conversation;
+* the discriminator (e.g. mentor) is played by a spawned Claude Code subagent;
 * this module only renders prompts, advances state, and persists sessions —
   it never calls an LLM itself.
 
@@ -85,7 +85,7 @@ def build_discriminator_prompt(
     discriminator_profile: FrozenProfile,
     state: RuntimeState,
 ) -> str:
-    """Render the role-play prompt to hand to the zzl subagent for the open round.
+    """Render the role-play prompt to hand to the mentor subagent for the open round.
 
     Must be called after `record_generator_step` for the current round.
     """

@@ -5,7 +5,7 @@ from scapegoat.profile.schema import FrozenProfile
 
 def test_frozen_profile_valid():
     profile = FrozenProfile(
-        subject_id="zgh",
+        subject_id="author",
         role="generator",
         version=1,
         summary="summary",
@@ -15,7 +15,7 @@ def test_frozen_profile_valid():
         convergence_rules=["converge"],
         dimension_rules={"execution": ["behavior"]},
         strategy_rules=["strategy"],
-        profile_signature="zgh: summary | dimensions=execution",
+        profile_signature="author: summary | dimensions=execution",
         evidence_refs={"execution": "# exec"},
         source_profile_path="/tmp/profile.md",
         source_analyse_paths={"execution": "/tmp/execution.md"},

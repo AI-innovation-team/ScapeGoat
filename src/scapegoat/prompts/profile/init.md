@@ -30,7 +30,7 @@ profile/
       └─ priorities.md
 ```
 
-其中 `{subject_id}` 是用户在阶段一指定的人物标识符（如 `zzl`、`lkj`，通常是姓名缩写或代号）。
+其中 `{subject_id}` 是用户在阶段一指定的人物标识符（如 `mentor`、`peer`，通常是姓名缩写或代号）。
 
 **11 个 analyse 文件 + 1 个 profile.md，缺一不可。**
 

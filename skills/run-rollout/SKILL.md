@@ -1,6 +1,6 @@
 ---
 name: run-rollout
-description: Run an adversarial generator/discriminator rollout between two frozen scapegoat profiles. Use when the user wants to iterate a deliverable against a critic until convergence or max steps. Supports an in-session mode where Claude Code itself plays the roles (no API key needed). Triggers on "run rollout", "跑 rollout", "对抗迭代", "生成-判别", "模拟 zzl".
+description: Run an adversarial generator/discriminator rollout between two frozen scapegoat profiles. Use when the user wants to iterate a deliverable against a critic until convergence or max steps. Supports an in-session mode where Claude Code itself plays the roles (no API key needed). Triggers on "run rollout", "跑 rollout", "对抗迭代", "生成-判别", "模拟 mentor".
 ---
 
 # Run a scapegoat rollout
@@ -14,9 +14,9 @@ There are two ways to run it. Pick based on what the user asked for.
 ## Mode A — in-session (default; no API key)
 
 Claude Code runs the loop itself: the **main conversation plays the generator**
-(e.g. zgh) and a **spawned subagent plays the discriminator** (e.g. zzl). Python
+(e.g. author) and a **spawned subagent plays the discriminator** (e.g. mentor). Python
 only renders prompts and persists state — it never calls an LLM. Use this when
-the user wants Claude Code to "simulate zzl" / "展开一个智能体模拟 zzl", or when
+the user wants Claude Code to "simulate mentor" / "展开一个智能体模拟 mentor", or when
 there is no Anthropic API key available.
 
 ### Procedure
@@ -30,7 +30,7 @@ there is no Anthropic API key available.
 3. Loop while `not in_session.is_finished(state)`:
    a. **Play the generator yourself**: read the task, the last critique
       (`in_session.latest_feedback(state)`), and the current best deliverable,
-      then write the next deliverable *in zgh's voice*. Record it:
+      then write the next deliverable *in author's voice*. Record it:
       `deliverable = in_session.record_generator_step(state, content)`.
    b. **Render the critic prompt**:
       `prompt = in_session.build_discriminator_prompt(discriminator, state)`.
@@ -47,8 +47,8 @@ there is no Anthropic API key available.
 ### Notes for Mode A
 - The subagent must return ONLY the JSON object; `record_discriminator_step`
   tolerates fenced/wrapped JSON but the cleaner the better.
-- Keep the generator genuinely in zgh's voice — the point is a realistic loop,
-  not a generic draft reviewed by zzl.
+- Keep the generator genuinely in author's voice — the point is a realistic loop,
+  not a generic draft reviewed by mentor.
 - One subagent per round keeps token use bounded; don't batch rounds.
 
 ## Mode B — Claude SDK backend (needs credentials)
@@ -59,6 +59,6 @@ deterministic `local` backend (`backend="local"`) is only an MVP placeholder and
 will NOT sound like the real persona — never present it as a faithful simulation.
 
 ## When to use which
-- "let Claude Code simulate zzl" / no API key  → **Mode A**.
+- "let Claude Code simulate mentor" / no API key  → **Mode A**.
 - "run it headless with the API" / batch automation → **Mode B** (`claude`).
 - quick smoke test of the plumbing only → `local`, and say so explicitly.

@@ -61,8 +61,8 @@ def render_session_markdown(session: RuntimeSession) -> str:
         f"- `deliverable_type`: `{task.deliverable_type}`",
         "",
     ]
-    lines.extend(_format_profile_section("生成器画像（zgh）", generator))
-    lines.extend(_format_profile_section("判别器画像（zzl）", discriminator))
+    lines.extend(_format_profile_section("生成器画像（author）", generator))
+    lines.extend(_format_profile_section("判别器画像（mentor）", discriminator))
     lines.extend(
         [
             "## 初始任务",

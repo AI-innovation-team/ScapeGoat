@@ -25,7 +25,7 @@ description: Summon a scapegoat profile to "possess" (夺舍) and answer/act in 
 - 给了 `profile_dir`/`subject_id` → 直接用；下文以 `<subject_id>`（目录名）称呼。
 - **没给 → 自动扫描候选**：用 Glob 找 `profiles/*/profile.md`（若空，再扫当前目录 `*/profile.md`），列出目录名让用户选：
 
-  > 没说请谁上身。当前可召唤：`zzl`、`zgh`、…… 选哪个？（或直接给我一个 `profile_dir`）
+  > 没说请谁上身。当前可召唤：`mentor`、`author`、…… 选哪个？（或直接给我一个 `profile_dir`）
 
 - 一个都没扫到 → 告知此处没有画像目录，请用户提供 `profile_dir`。
 

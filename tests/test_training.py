@@ -48,8 +48,8 @@ def test_training_updates_versions():
     )
     loss = compute_loss(record)
     new_generator, new_discriminator, result = train_profiles(
-        make_profile("zgh", "generator"),
-        make_profile("zzl", "discriminator"),
+        make_profile("author", "generator"),
+        make_profile("mentor", "discriminator"),
         record,
         loss,
     )
@@ -71,7 +71,7 @@ def test_build_patches_keeps_removal_points_raw():
 
 
 def test_apply_patch_removes_matching_rules_by_substring():
-    profile = make_profile("zzl", "discriminator").model_copy(
+    profile = make_profile("mentor", "discriminator").model_copy(
         update={
             "behavior_rules": ["真实反馈关注: 过度展开背景介绍", "保留这条规则"],
             "dimension_rules": {"execution": ["过度展开背景介绍的旧习惯", "保留这条规则"]},
@@ -91,7 +91,7 @@ def test_apply_patch_removes_matching_rules_by_substring():
 
 def test_train_profiles_drops_over_divergent_rule_end_to_end():
     over_divergent = "反复追问排版细节"
-    discriminator = make_profile("zzl", "discriminator").model_copy(
+    discriminator = make_profile("mentor", "discriminator").model_copy(
         update={
             "behavior_rules": ["真实反馈关注: 反复追问排版细节", "保留这条规则"],
             "dimension_rules": {"execution": ["反复追问排版细节", "保留这条规则"]},
@@ -107,14 +107,14 @@ def test_train_profiles_drops_over_divergent_rule_end_to_end():
     )
     loss = compute_loss(record)
     assert over_divergent in loss.extra_points
-    _, new_discriminator, _ = train_profiles(make_profile("zgh", "generator"), discriminator, record, loss)
+    _, new_discriminator, _ = train_profiles(make_profile("author", "generator"), discriminator, record, loss)
     assert not any(over_divergent in rule for rule in new_discriminator.behavior_rules)
     assert not any(over_divergent in rule for rule in new_discriminator.dimension_rules["execution"])
     assert "保留这条规则" in new_discriminator.behavior_rules
 
 
 def test_apply_patch_removal_ignores_blank_points():
-    profile = make_profile("zzl", "discriminator")
+    profile = make_profile("mentor", "discriminator")
     patch = ProfileUpdatePatch(
         target_role="discriminator",
         remove_rules=["", "   "],
@@ -247,7 +247,7 @@ def test_build_patches_keeps_legacy_sentence_path_without_dimensions():
 
 def test_apply_patch_caps_behavior_rules_and_evicts_oldest_training_rules():
     trained = [f"真实反馈关注[维度{i}]: 当情境{i}时 → 关注点{i}" for i in range(MAX_BEHAVIOR_RULES)]
-    profile = make_profile("zzl", "discriminator").model_copy(
+    profile = make_profile("mentor", "discriminator").model_copy(
         update={"behavior_rules": ["原始规则", *trained], "dimension_rules": {"execution": ["原始规则", *trained]}}
     )
     patch = ProfileUpdatePatch(
@@ -269,7 +269,7 @@ def test_apply_patch_caps_behavior_rules_and_evicts_oldest_training_rules():
 
 def test_apply_patch_never_evicts_frozen_profile_rules():
     original = [f"原始规则{i}" for i in range(MAX_BEHAVIOR_RULES + 5)]
-    profile = make_profile("zzl", "discriminator").model_copy(update={"behavior_rules": list(original)})
+    profile = make_profile("mentor", "discriminator").model_copy(update={"behavior_rules": list(original)})
     patch = ProfileUpdatePatch(
         target_role="discriminator",
         add_rules=["真实反馈关注[新维度]: 当新情境时 → 新关注点"],
@@ -281,8 +281,8 @@ def test_apply_patch_never_evicts_frozen_profile_rules():
 
 
 def test_repeated_training_stops_inflating_behavior_rules():
-    generator = make_profile("zgh", "generator")
-    discriminator = make_profile("zzl", "discriminator")
+    generator = make_profile("author", "generator")
+    discriminator = make_profile("mentor", "discriminator")
     for round_index in range(20):
         loss = LossReport(
             dissatisfaction_gap=3,
@@ -342,8 +342,8 @@ def large_loss() -> LossReport:
 def test_train_profiles_records_history_without_rolling_back_on_first_pass():
     history = TrainingHistory()
     generator, discriminator, result = train_profiles(
-        make_profile("zgh", "generator"),
-        make_profile("zzl", "discriminator"),
+        make_profile("author", "generator"),
+        make_profile("mentor", "discriminator"),
         make_record(),
         small_loss(),
         history,
@@ -358,8 +358,8 @@ def test_train_profiles_records_history_without_rolling_back_on_first_pass():
 def test_train_profiles_rolls_back_when_loss_grows():
     history = TrainingHistory()
     generator, discriminator, _ = train_profiles(
-        make_profile("zgh", "generator"),
-        make_profile("zzl", "discriminator"),
+        make_profile("author", "generator"),
+        make_profile("mentor", "discriminator"),
         make_record(),
         small_loss(),
         history,
@@ -380,8 +380,8 @@ def test_train_profiles_rolls_back_when_loss_grows():
 def test_train_profiles_keeps_previous_update_when_loss_shrinks():
     history = TrainingHistory()
     generator, discriminator, _ = train_profiles(
-        make_profile("zgh", "generator"),
-        make_profile("zzl", "discriminator"),
+        make_profile("author", "generator"),
+        make_profile("mentor", "discriminator"),
         make_record(),
         large_loss(),
         history,
@@ -395,8 +395,8 @@ def test_train_profiles_keeps_previous_update_when_loss_shrinks():
 
 def test_train_profiles_without_history_never_rolls_back():
     generator, discriminator, result = train_profiles(
-        make_profile("zgh", "generator"),
-        make_profile("zzl", "discriminator"),
+        make_profile("author", "generator"),
+        make_profile("mentor", "discriminator"),
         make_record(),
         large_loss(),
     )

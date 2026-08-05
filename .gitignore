@@ -62,7 +62,6 @@ benchmark/*/corpus/
 benchmark/*/cases.json
 benchmark/*/runs/
 benchmark/*/trained/
-benchmark/zzl/
 benchmark/*/style_cues.md
 
 # Local artifacts

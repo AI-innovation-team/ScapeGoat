@@ -53,14 +53,14 @@ def test_claude_backend_generate_and_critique_parse():
     )
     state = RuntimeState(task=task, generator_profile_version=1, discriminator_profile_version=1)
     generator_backend = ClaudeRoleBackend(BackendConfig(backend="claude"), client=fake_client("draft text"))
-    deliverable = generator_backend.generate(make_profile("zgh", "generator"), task, state, None)
+    deliverable = generator_backend.generate(make_profile("author", "generator"), task, state, None)
     assert deliverable.content == "draft text"
 
     discriminator_backend = ClaudeRoleBackend(
         BackendConfig(backend="claude"),
         client=fake_client('{"feedback": "ok", "dissatisfaction_score": 4, "reasons": ["done"]}'),
     )
-    critique = discriminator_backend.critique(make_profile("zzl", "discriminator"), task, state, deliverable)
+    critique = discriminator_backend.critique(make_profile("mentor", "discriminator"), task, state, deliverable)
     assert critique.dissatisfaction_score == 4
     assert critique.feedback == "ok"
     assert critique.reasons == ["done"]
@@ -75,7 +75,7 @@ def test_claude_backend_critique_reads_converged_flag():
         client=fake_client('{"feedback": "ok", "dissatisfaction_score": 2, "reasons": [], "converged": true}'),
     )
     deliverable = ClaudeRoleBackend(BackendConfig(backend="claude"), client=fake_client("draft text")).generate(
-        make_profile("zgh", "generator"), task, state, None
+        make_profile("author", "generator"), task, state, None
     )
-    critique = backend.critique(make_profile("zzl", "discriminator"), task, state, deliverable)
+    critique = backend.critique(make_profile("mentor", "discriminator"), task, state, deliverable)
     assert critique.converged is True

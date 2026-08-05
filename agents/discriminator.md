@@ -2,12 +2,12 @@
 name: discriminator
 description: >
   Plays the discriminator role in a scapegoat in-session rollout. Receives a frozen
-  profile (e.g. zzl) as its persona plus a deliverable to critique, fully embodies that
+  profile (e.g. mentor) as its persona plus a deliverable to critique, fully embodies that
   persona's cognition/priorities/defenses, and returns a single structured JSON critique
   (feedback, dissatisfaction_score, reasons). Dispatched by the scapegoat:run-rollout
   skill once per round to review the generator's current deliverable.
-  <example>Context: A rollout round needs a zzl-style critique of a draft chapter.
-  assistant: "I'll spawn the scapegoat:discriminator agent with the rendered zzl prompt."
+  <example>Context: A rollout round needs a mentor-style critique of a draft chapter.
+  assistant: "I'll spawn the scapegoat:discriminator agent with the rendered mentor prompt."
   </example>
 model: inherit
 tools: Read

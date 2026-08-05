@@ -36,8 +36,8 @@ def test_rollout_generator_runs_to_max_steps_with_stub():
         return CritiqueStep(step_index=deliverable.step_index, feedback="ok", dissatisfaction_score=2)
 
     state = run_rollout(
-        make_profile("zgh", "generator"),
-        make_profile("zzl", "discriminator"),
+        make_profile("author", "generator"),
+        make_profile("mentor", "discriminator"),
         task,
         generator_backend=generator,
         discriminator_backend=discriminator,
@@ -64,8 +64,8 @@ def test_rollout_stops_early_when_discriminator_converges():
         )
 
     state = run_rollout(
-        make_profile("zgh", "generator"),
-        make_profile("zzl", "discriminator"),
+        make_profile("author", "generator"),
+        make_profile("mentor", "discriminator"),
         task,
         generator_backend=generator,
         discriminator_backend=discriminator,

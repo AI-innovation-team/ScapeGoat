@@ -86,8 +86,8 @@ def test_train_profiles_accepts_a_semantic_loss_response(tmp_path: Path):
     )
     discriminator_out = tmp_path / "discriminator-v2.json"
     payload = train_profiles(
-        generator_profile_path=_write_profile(tmp_path / "generator.json", "zgh", "generator"),
-        discriminator_profile_path=_write_profile(tmp_path / "discriminator.json", "zzl", "discriminator"),
+        generator_profile_path=_write_profile(tmp_path / "generator.json", "author", "generator"),
+        discriminator_profile_path=_write_profile(tmp_path / "discriminator.json", "mentor", "discriminator"),
         record_file=str(record_out),
         generator_out=str(tmp_path / "generator-v2.json"),
         discriminator_out=str(discriminator_out),

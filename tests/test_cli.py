@@ -44,8 +44,8 @@ def test_rollout_run_command(tmp_path: Path):
     runner = CliRunner()
     generator_profile = tmp_path / "generator.json"
     discriminator_profile = tmp_path / "discriminator.json"
-    make_profile(generator_profile, "zgh", "generator")
-    make_profile(discriminator_profile, "zzl", "discriminator")
+    make_profile(generator_profile, "author", "generator")
+    make_profile(discriminator_profile, "mentor", "discriminator")
     task_file = tmp_path / "task.json"
     task_file.write_text(
         json.dumps(
@@ -143,8 +143,8 @@ def test_train_update_writes_and_reuses_loss_history(tmp_path: Path):
     runner = CliRunner()
     generator = tmp_path / "generator.json"
     discriminator = tmp_path / "discriminator.json"
-    make_profile(generator, "zgh", "generator")
-    make_profile(discriminator, "zzl", "discriminator")
+    make_profile(generator, "author", "generator")
+    make_profile(discriminator, "mentor", "discriminator")
     record_file = tmp_path / "record.json"
     record_file.write_text(
         json.dumps(

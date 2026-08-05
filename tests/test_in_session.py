@@ -87,8 +87,8 @@ def test_in_session_converged_critique_ends_session_early(profiles_dir: Path):
 def test_full_in_session_cycle_and_persistence(profiles_dir: Path, tmp_path):
     generator, discriminator = _profiles(profiles_dir)
     task = _task()
-    gen_path = tmp_path / "zgh.json"
-    disc_path = tmp_path / "zzl.json"
+    gen_path = tmp_path / "author.json"
+    disc_path = tmp_path / "mentor.json"
     from scapegoat.runtime.persistence import save_model
 
     save_model(generator, gen_path)
