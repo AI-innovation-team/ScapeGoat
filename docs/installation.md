@@ -16,18 +16,18 @@ pip install scapegoat
 
 ## From source
 
-The source files for scapegoat can be downloaded from the [Github repo](https://github.com/colehank/scapegoat).
+The source files for scapegoat can be downloaded from the [Github repo](https://github.com/AI-innovation-team/scapegoat).
 
 You can either clone the public repository:
 
 ```sh
-git clone https://github.com/colehank/scapegoat
+git clone https://github.com/AI-innovation-team/scapegoat
 ```
 
-Or download the [tarball](https://github.com/colehank/scapegoat/tarball/main):
+Or download the [tarball](https://github.com/AI-innovation-team/scapegoat/tarball/main):
 
 ```sh
-curl -OJL https://github.com/colehank/scapegoat/tarball/main
+curl -OJL https://github.com/AI-innovation-team/scapegoat/tarball/main
 ```
 
 Once you have a copy of the source, you can install it with:

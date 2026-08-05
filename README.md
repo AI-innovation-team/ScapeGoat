@@ -82,7 +82,7 @@ flowchart TB
 在 Claude Code 里两条命令：
 
 ```
-/plugin marketplace add colehank/scapegoat
+/plugin marketplace add AI-innovation-team/scapegoat
 /plugin install scapegoat@scapegoat
 ```
 
@@ -107,7 +107,7 @@ flowchart TB
 <summary>本地开发安装</summary>
 
 ```bash
-git clone git@github.com:colehank/scapegoat.git && cd scapegoat
+git clone https://github.com/AI-innovation-team/scapegoat.git && cd scapegoat
 uv tool install --editable .           # CLI 与 MCP server
 uv tool install --editable ".[audio]"  # 可选：语音语料转写（会拉 PyTorch）
 uv tool install --editable ".[claude]" # 可选：脱离会话的自动化跑批

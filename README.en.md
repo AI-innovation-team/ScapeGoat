@@ -82,7 +82,7 @@ Continuous learning is not a separate mechanism — it is the same entry point r
 Two commands inside Claude Code:
 
 ```
-/plugin marketplace add colehank/scapegoat
+/plugin marketplace add AI-innovation-team/scapegoat
 /plugin install scapegoat@scapegoat
 ```
 
@@ -107,7 +107,7 @@ Profiles land in `profiles/<id>/`: `profile.md` (an index-style overview) plus 1
 <summary>Local development install</summary>
 
 ```bash
-git clone git@github.com:colehank/scapegoat.git && cd scapegoat
+git clone https://github.com/AI-innovation-team/scapegoat.git && cd scapegoat
 uv tool install --editable .           # CLI and MCP server
 uv tool install --editable ".[audio]"  # optional: speech corpus transcription (pulls PyTorch)
 uv tool install --editable ".[claude]" # optional: unattended batch runs
