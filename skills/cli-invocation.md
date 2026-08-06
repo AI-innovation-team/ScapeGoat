@@ -5,7 +5,7 @@
 按顺序尝试，第一个可用的就用：
 
 1. **`scapegoat <args>`** —— 用户已经装过（`uv tool install`）时最快。
-2. **`uvx --from git+https://github.com/AI-innovation-team/scapegoat scapegoat <args>`** —— 未安装时的零安装路径。uv 会自动拉代码建环境，首次略慢，之后有缓存。仓库是公开的，所以用 HTTPS 形式，用户无需配置 SSH key。
+2. **`uvx --from git+https://github.com/AI-innovation-team/ScapeGoat scapegoat <args>`** —— 未安装时的零安装路径。uv 会自动拉代码建环境，首次略慢，之后有缓存。仓库是公开的，所以用 HTTPS 形式，用户无需配置 SSH key。
 3. **都不可用**（没有 uv 也没装包）：不要中断任务。告诉用户这一步被跳过、以及装上后能得到什么，然后继续。字节预算这类校验可以用 `wc -c` 手工核对——默认上限是 `profile.md` 6144 字节、每个 `analyse/*.md` 10240 字节，画像目录下若有 `budget.json` 则以它为准。
 
 判断是否可用：`command -v scapegoat` / `command -v uvx`，不要靠试错报错来判断。

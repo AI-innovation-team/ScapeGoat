@@ -23,7 +23,7 @@ Not a label like "he's loyal", but a **ranked conflict-resolution rule** — som
 Two separate steps inside Claude Code. **Do not paste both lines at once**: the first opens a prompt that wants the repository path and nothing else.
 
 ```
-/plugin marketplace add AI-innovation-team/scapegoat
+/plugin marketplace add AI-innovation-team/ScapeGoat
 ```
 
 ```
@@ -55,7 +55,7 @@ Profiles land in `profiles/<id>/` and take precedence over a bundled one of the 
 <summary>Local development install</summary>
 
 ```bash
-git clone https://github.com/AI-innovation-team/scapegoat.git && cd scapegoat
+git clone https://github.com/AI-innovation-team/ScapeGoat.git && cd ScapeGoat
 uv tool install --editable .           # CLI and MCP server
 uv tool install --editable ".[audio]"  # optional: speech corpus transcription (pulls PyTorch)
 uv tool install --editable ".[claude]" # optional: unattended batch runs

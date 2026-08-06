@@ -23,7 +23,7 @@
 在 Claude Code 里分两步敲。**不要一次粘贴两行**：第一条会弹出输入框，那里只填仓库地址。
 
 ```
-/plugin marketplace add AI-innovation-team/scapegoat
+/plugin marketplace add AI-innovation-team/ScapeGoat
 ```
 
 ```
@@ -55,7 +55,7 @@
 <summary>本地开发安装</summary>
 
 ```bash
-git clone https://github.com/AI-innovation-team/scapegoat.git && cd scapegoat
+git clone https://github.com/AI-innovation-team/ScapeGoat.git && cd ScapeGoat
 uv tool install --editable .           # CLI 与 MCP server
 uv tool install --editable ".[audio]"  # 可选：语音语料转写（会拉 PyTorch）
 uv tool install --editable ".[claude]" # 可选：脱离会话的自动化跑批
