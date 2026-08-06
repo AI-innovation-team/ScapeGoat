@@ -102,6 +102,24 @@ def _rewrite_reference(match: re.Match[str], repo: str, visibility: str, known: 
     return f"https://github.com/{repo}"  # plain web URL: always HTTPS
 
 
+def _manifest_name(relative: str) -> str | None:
+    """Read the `name` field out of one plugin manifest."""
+
+    path = ROOT / ".claude-plugin" / relative
+    if not path.exists():
+        return None
+    match = re.search(r'"name"\s*:\s*"([^"]+)"', path.read_text(encoding="utf-8"))
+    return match.group(1) if match else None
+
+
+def plugin_id() -> str:
+    return _manifest_name("plugin.json") or "scapegoat"
+
+
+def marketplace_id() -> str:
+    return _manifest_name("marketplace.json") or plugin_id()
+
+
 def _literal_rules(repo: str, visibility: str, known: set[str]) -> list[tuple[str, str]]:
     """Replacements outside URLs: install ids, the `cd` target, one sentence."""
 
@@ -113,7 +131,10 @@ def _literal_rules(repo: str, visibility: str, known: set[str]) -> list[tuple[st
     )
     return [
         (rf"(?<=/plugin marketplace add )(?:{'|'.join(re.escape(k) for k in sorted(known))})", repo),
-        (r"(?<=/plugin install )[A-Za-z0-9._-]+@[A-Za-z0-9._-]+", f"{name}@{name}"),
+        # The install id is plugin@marketplace, both read from the manifests.
+        # Deriving it from the repository name would break the moment the two
+        # differ — a rename, or a repo whose name is not the plugin's.
+        (r"(?<=/plugin install )[A-Za-z0-9._-]+@[A-Za-z0-9._-]+", f"{plugin_id()}@{marketplace_id()}"),
         (r"(?<=&& cd )[A-Za-z0-9._-]+", name),
         (r"仓库是(?:私有|公开)的，所以用 (?:SSH|HTTPS) 形式[^\n]*。", transport),
     ]

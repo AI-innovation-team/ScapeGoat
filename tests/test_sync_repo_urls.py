@@ -14,7 +14,7 @@ apply_rules = sync_repo_urls.apply_rules
 
 SAMPLE = """\
 /plugin marketplace add old/name
-/plugin install name@name
+/plugin install scapegoat@scapegoat
 git clone git@github.com:old/name.git && cd name
 `uvx --from git+ssh://git@github.com/old/name scapegoat ...`
 "repository": "https://github.com/old/name",
@@ -52,7 +52,7 @@ def test_rename_updates_every_shape():
     out = apply_rules(SAMPLE, "newowner/newrepo", "public", previous="old/name")
     assert "old/name" not in out
     assert "/plugin marketplace add newowner/newrepo" in out
-    assert "/plugin install newrepo@newrepo" in out
+    assert "/plugin install scapegoat@scapegoat" in out  # manifest-owned, not renamed
     assert "&& cd newrepo" in out
     assert '"https://github.com/newowner/newrepo"' in out
 
@@ -111,3 +111,13 @@ def test_previous_defaults_to_the_recorded_manifest():
     recorded = sync_repo_urls.recorded_repo()
     assert recorded is not None
     assert "/" in recorded
+
+
+def test_install_id_comes_from_the_manifest_not_the_repo_name():
+    """A rename must not rewrite plugin@marketplace, which the manifests own."""
+
+    text = "/plugin install scapegoat@scapegoat\n/plugin marketplace add old/name\n"
+    out = apply_rules(text, "AnOrg/RenamedRepo", "public", previous="old/name")
+    assert "/plugin marketplace add AnOrg/RenamedRepo" in out
+    assert f"/plugin install {sync_repo_urls.plugin_id()}@{sync_repo_urls.marketplace_id()}" in out
+    assert "RenamedRepo@RenamedRepo" not in out
