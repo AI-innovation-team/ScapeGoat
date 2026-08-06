@@ -1,26 +1,35 @@
-# scapegoat
+# 替罪羊 ｜ ScapeGoat
 
 [中文](README.md) | **English**
 
-> Build a behavior-predictive psychological profile of a specific person, then have Claude think and act as that profile.
+[![CI](https://github.com/AI-innovation-team/ScapeGoat/actions/workflows/ci.yml/badge.svg)](https://github.com/AI-innovation-team/ScapeGoat/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/AI-innovation-team/ScapeGoat/actions/workflows/codeql.yml/badge.svg)](https://github.com/AI-innovation-team/ScapeGoat/actions/workflows/codeql.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-d97757)](#install)
+
+> Train a profile that predicts how one person behaves, from a psychodynamic angle, and let an agent become them.
 
 ## Introduction
 
-Turn someone's corpus (chat logs, interviews, documents) or one round of structured questioning into a profile that predicts how they behave. Then:
+Agents like Claude Code already turn out decent deliverables; the hard part is matching one particular person's taste.
+So how does an agent learn to judge and act the way one specific person does?
+We built a toy model from a psychodynamic angle, ScapeGoat: material about someone — a conversation, an interview, a psychometric assessment — goes through the machine-learning loop of training and evaluation, and comes out as a profile that is psychologically coherent and predictive of behavior, for an agent to use.
+
+A profile looks roughly like this (trained from one public figure's online corpus):
+
+> ...
+> Under conflict his ordering is: **debt to specific people > integrity of his self-narrative > autonomy > the long-term venture > money > venting**. Money sits far down, backed by large real decisions; venting ranks last but is usually already spent before anyone can stop him.
+> ...
+
+Once this profile is loaded, the agent will try to think and act as them:
 
 - **Let them answer** — "reply to this email as my advisor"
-- **Let them tear it apart first** — a deliverable gets critiqued by their profile before it reaches the real person
+- **Let them tear it apart first** — a deliverable goes through their profile before it reaches the real person
 - **Predict what they'd choose** — facing a concrete dilemma, what do they sacrifice and what do they protect?
 
-Output looks like this (from a profile built out of public material):
-
-> Under conflict his ordering is: **debt to specific people > integrity of his self-narrative > autonomy > the long-term venture > money > venting**. Money sits far down, backed by large real decisions; venting ranks last but is usually already spent before anyone can stop him.
-
-Not a label like "he's loyal", but a **ranked conflict-resolution rule** — something you can apply to a situation it was never derived from.
+If some piece of your work needs round after round with a particular person — or with yourself — it may be worth training them with ScapeGoat and letting them possess Claude Code to polish that deliverable for you.
 
 ## Install
-
-Two separate steps inside Claude Code. **Do not paste both lines at once**: the first opens a prompt that wants the repository path and nothing else.
 
 ```
 /plugin marketplace add AI-innovation-team/ScapeGoat
@@ -30,26 +39,24 @@ Two separate steps inside Claude Code. **Do not paste both lines at once**: the 
 /plugin install scapegoat@scapegoat
 ```
 
-No Python to install first, and no API key.
-
 ## Usage
 
-Three example profiles ship with the plugin (`luoyonghao`, `mentor`, `student`), usable in any directory without building anything first:
+Three example profiles ship with it (`luoyonghao`, `mentor`, `student`), ready to try once installed:
 
-> "summon luoyonghao"　　"have mentor critique my proposal"
+> "let luoyonghao possess this session"　　"have mentor critique my proposal"
 
 Everything else is plain language:
 
 | Goal | What to say |
 |---|---|
-| Build from corpus | "build a profile of Wang from these chat logs" |
-| Build by interview | "help me profile my advisor" (11 dimensions, ~10–15 rounds) |
-| Build by assessment | "give me an assessment to build my profile" (~25–35 items, answered by the subject) |
+| Train from corpus | "train a profile of Wang from these chat logs" |
+| Train by interview | "help me train a profile of my advisor" (11 dimensions, ~10–15 rounds) |
+| Train by assessment | "give me an assessment to train my profile" (~25–35 items, answered by the subject) |
 | Summon | "summon Wang", "write an email declining this meeting as Wang" |
 | Adversarial polish | "have Wang critique my proposal, run a rollout" |
 | Continuous learning | "keep training Wang's profile with this new corpus" |
 
-Profiles land in `profiles/<id>/` and take precedence over a bundled one of the same name: `profile.md` as an overview plus 11 dimension files under `analyse/`. Dimensions with thin material carry their confidence rather than invented detail.
+Profiles land in `profiles/<id>/`: `profile.md` as an overview plus 11 dimension files under `analyse/`. Dimensions with thin material carry their confidence rather than invented detail.
 
 <details>
 <summary>Local development install</summary>
@@ -67,13 +74,11 @@ claude --plugin-dir .                  # load the plugin from this directory
 
 ## Mechanism
 
-A profile is extracted from corpus or questioning, and once Claude loads it, it becomes the thing in the middle — situation in, behavior out:
-
 ```mermaid
 flowchart LR
     SRC[/"corpus · interview · assessment"/] -. extract · keep learning .-> A
     X(["situation X<br/>what he runs into"]) ==> A
-    subgraph A[" the Profile Claude loads "]
+    subgraph A[" the profile Claude loads "]
         direction TB
         L1["foundation　formation · worldview · drives_fears"]
         L2["traits　personality · cognition · affect · narratives · defenses"]
@@ -87,7 +92,7 @@ Inside the profile, the 11 dimensions are not a flat list of labels but a three-
 
 The dashed arrow is continuous learning: the same entry point run again, where evidence supporting an existing rule adds no words, evidence that sharpens it rewrites the sentence, and conflicting evidence merges into a conditional rule. **Appending is forbidden** — success means more information at roughly the same byte count.
 
-Plenty of setups ask a model to play a person; results vary enormously with how the profile is built. Five constraints do the work:
+Five constraints make a profile predictive rather than merely descriptive:
 
 1. **A layered causal model, not a bag of labels.** A label ("he's forceful") predicts nothing; a structure does. The foundation layer explains why this person became who they are, the behavior layer produces the predictions, and the two have to line up.
 2. **Every insight must reduce to "situation X → behavior Y".** Sentences that cannot name an X and a Y ("he's complicated") are barred. This is what makes a profile falsifiable rather than decorative.
@@ -105,7 +110,7 @@ Beyond scale, the more important next step is **ablating what a profile is made 
 
 ## Privacy and limits
 
-This tool produces psychological analysis of real individuals, usually without their knowledge.
+This tool analyses real individuals psychologically, usually without their knowledge.
 
 - **Data stays local.** `profiles/` and `database/` are in `.gitignore`; do not commit profiles or raw corpus to any repository.
 - **Never put credentials in a profile** (accounts, passwords, addresses) — the whole thing gets read into a model context.
@@ -116,7 +121,7 @@ This tool produces psychological analysis of real individuals, usually without t
 
 ```bash
 uv sync --group dev
-.venv/bin/python -m pytest -q     # 119 tests
+.venv/bin/python -m pytest -q     # 120 tests
 just qa                            # format + lint + typecheck + test
 ```
 

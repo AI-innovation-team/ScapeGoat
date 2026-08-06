@@ -1,6 +1,6 @@
 {
   "name": "scapegoat",
-  "displayName": "Scapegoat",
+  "displayName": "ScapeGoat",
   "version": "0.1.0",
   "description": "Build a behavior-predictive psychological profile of a person from corpus or interactive Q&A, then have Claude act as that profile.",
   "author": {

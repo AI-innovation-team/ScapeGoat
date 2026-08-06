@@ -1,9 +1,16 @@
 name: Workflow security analysis
 
-# Uploads SARIF to code scanning, which needs GitHub Advanced Security on
-# private repositories. Manual trigger only until then.
+# Uploads SARIF to code scanning, free on public repositories. No schedule: the
+# findings depend only on the workflow files, so a push trigger sees every
+# change that could introduce one.
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 permissions: {}
 
@@ -12,6 +19,8 @@ jobs:
     name: Run zizmor
     runs-on: ubuntu-latest
     permissions:
+      # Restated because a job-level block replaces the top-level one.
+      contents: read
       security-events: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2

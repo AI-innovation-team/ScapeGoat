@@ -1,10 +1,19 @@
 name: CodeQL
 
-# Code scanning needs GitHub Advanced Security on private repositories, so the
-# automatic triggers are off. Re-enable push/pull_request/schedule if this repo
-# becomes public or gains GHAS.
+# Code scanning is free on public repositories. Were this repo to go private
+# again it would need GitHub Advanced Security — drop back to workflow_dispatch
+# alone at that point, or every run fails on the upload step.
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  # Catches newly published advisories against code that has not changed.
+  schedule:
+    - cron: "23 5 * * 1"
 
 permissions: {}
 
@@ -13,6 +22,9 @@ jobs:
     name: Analyze
     runs-on: ubuntu-latest
     permissions:
+      # A job-level block replaces the top-level one rather than extending it,
+      # so checkout's `contents: read` has to be restated here.
+      contents: read
       security-events: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
